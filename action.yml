@@ -48,14 +48,6 @@ inputs:
     description: 'Options passed to systemd-nspawn, e.g. -E CI=${CI}'
     required: false
     default: ''
-  bootpartition:
-    description: 'Partition number for boot (/boot), empty means none'
-    required: false
-    default: '1'
-  rootpartition:
-    description: 'Partition number for root (/)'
-    required: false
-    default: '2'
   shell:
     description: 'Path to shell to run the commands with'
     required: false
@@ -98,43 +90,8 @@ runs:
     - name: Install dependencies
       run: |
         sudo apt-get update && sudo apt-get install -y binfmt-support parted wget dosfstools zip xorriso squashfs-tools
-        (test -x /usr/bin/qemu-arm-static && test -x /usr/bin/qemu-aarch64-static) || sudo apt install -y qemu-user-static
+        (test -x /usr/bin/qemu-arm-static && test -x /usr/bin/qemu-loongarch64-static) || sudo apt install -y qemu-user
       shell: bash
-    - name: Install qemu wrapper
-      shell: bash
-      run: |
-        case ${{ inputs.cpu }} in
-        "")
-            cpu="arm1176:cortex-a53"
-        ;;
-        arm1176)
-            cpu="arm1176:cortex-a53"
-        ;;
-        cortex-a7)
-            cpu="cortex-a7:cortex-a53"
-        ;;
-        cortex-a8)
-            cpu="cortex-a8:max"
-        ;;
-        cortex-a53)
-            cpu="max:cortex-a53"
-        ;;
-        cortex-a76)
-            cpu="max:cortex-a76"
-        ;;
-        *)
-            cpu=${{ inputs.cpu }}
-        esac
-        arm_cpu=${cpu%:*}
-        aarch64_cpu=${cpu#*:}
-        sudo gcc -static ${GITHUB_ACTION_PATH}/qemu-wrapper.c -DQEMU_CPU=${arm_cpu} -O3 -s -o /usr/bin/qemu-arm-static0
-        sudo gcc -static ${GITHUB_ACTION_PATH}/qemu-wrapper.c -DQEMU_CPU=${aarch64_cpu} -O3 -s -o /usr/bin/qemu-aarch64-static0
-        sudo update-binfmts --unimport qemu-arm || echo "warning: could not unimport qemu-arm"
-        sudo update-binfmts --unimport qemu-aarch64 || echo "warning: could not unimport qemu-aarch64"
-        sudo update-binfmts --package arm-runner-action --install arm-runner-action-qemu-arm /usr/bin/qemu-arm-static0 --magic '\x7f\x45\x4c\x46\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x28\x00' --mask '\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff' --credentials yes --fix-binary yes
-        sudo update-binfmts --package arm-runner-action --install arm-runner-action-qemu-arm1 /usr/bin/qemu-arm-static0 --magic '\x7f\x45\x4c\x46\x01\x01\x01\x00\x41\x49\x02\x00\x00\x00\x00\x00\x02\x00\x28\x00' --mask '\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff' --credentials yes --fix-binary yes
-        sudo update-binfmts --package arm-runner-action --install arm-runner-action-qemu-aarch64 /usr/bin/qemu-aarch64-static0 --magic '\x7f\x45\x4c\x46\x02\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\xb7\x00' --mask '\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff' --credentials yes --fix-binary yes
-        sudo update-binfmts --package arm-runner-action --install arm-runner-action-qemu-aarch641 /usr/bin/qemu-aarch64-static0 --magic '\x7f\x45\x4c\x46\x02\x01\x01\x00\x41\x49\x02\x00\x00\x00\x00\x00\x02\x00\xb7\x00' --mask '\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff' --credentials yes --fix-binary yes
 
     - name: Download base image
       run: |
@@ -143,7 +100,7 @@ runs:
       id: download_image
     - name: Mount and optionally resize image
       run: |
-        sudo --preserve-env=GITHUB_OUTPUT bash ${GITHUB_ACTION_PATH}/mount_image.sh ${{ steps.download_image.outputs.image }} ${{ inputs.image_additional_mb }} ${{ inputs.use_systemd_nspawn }} ${{ inputs.rootpartition }} ${{ inputs.bootpartition }}
+        sudo --preserve-env=GITHUB_OUTPUT bash ${GITHUB_ACTION_PATH}/mount_image.sh ${{ steps.download_image.outputs.image }} ${{ inputs.image_additional_mb }} ${{ inputs.use_systemd_nspawn }}
       shell: bash
       id: mount_image
     - name: Mount CPU info

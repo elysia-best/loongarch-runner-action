@@ -71,5 +71,11 @@ case `echo *` in
 esac
 
 # Find filesystem.squashfs from extracted livecd
-mv "$(ls filesystem.squashfs */filesystem.squashfs 2>/dev/null | head -n 1)" loongarch-runner.squashfs
+mv "$(ls *.squashfs */*.squashfs 2>/dev/null | head -n 1)" loongarch-runner.squashfs
+# Delete other files
+for f in $(ls . 2>/dev/null); do
+    if [ "$f" != "loongarch-runner.squashfs" ]; then
+        rm -rf "$f"
+    fi
+done
 echo "image=${tempdir}/loongarch-runner.squashfs" >> "$GITHUB_OUTPUT"

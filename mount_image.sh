@@ -4,20 +4,6 @@ set -uo pipefail
 image=$1
 additional_mb=$2
 use_systemd_nspawn=$3
-rootpartition=$4
-
-if [ $# -ge 5 ]; then
-    bootpartition=$5
-    if [ "x$rootpartition" = "x$bootpartition" ]; then
-        echo "Boot partition cannot be equal to root partition"
-        if [ "x$bootpartition" = "x1" ]; then
-            echo "Forgot to unset bootpartition ?"
-        fi
-        exit 1
-    fi
-else
-    bootpartition=
-fi
 
 if [ ${additional_mb} -gt 0 ]; then
     dd if=/dev/zero bs=1M count=${additional_mb} >> ${image}
