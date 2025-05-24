@@ -4,7 +4,7 @@ inputs:
   base_image:
     description: 'System base image'
     required: true
-    default: 'raspios_lite:latest'
+    default: 'deepin_os:23_1'
   image_additional_mb:
     description: 'Additional MB for image'
     required: false
@@ -14,9 +14,9 @@ inputs:
     required: false
     default: 'no'
   cpu:
-    description: 'CPU architecture, arm1176 for arm6vl (Pi Zero)'
+    description: 'CPU architecture,'
     required: false
-    default: 'arm1176:cortex-a53'
+    default: 'la464'
   cpu_info:
     description: 'Path to cpu info file to be mounted on /proc/cpuinfo'
     required: false
@@ -97,7 +97,7 @@ runs:
   steps:
     - name: Install dependencies
       run: |
-        sudo apt-get update && sudo apt-get install -y binfmt-support parted wget dosfstools zip
+        sudo apt-get update && sudo apt-get install -y binfmt-support parted wget dosfstools zip xorriso squashfs-tools
         (test -x /usr/bin/qemu-arm-static && test -x /usr/bin/qemu-aarch64-static) || sudo apt install -y qemu-user-static
       shell: bash
     - name: Install qemu wrapper
