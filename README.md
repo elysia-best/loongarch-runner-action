@@ -1,17 +1,17 @@
-# arm-runner-action
+# loongarch-runner-action
 
 Run tests natively and build images directly from GitHub Actions using a
-chroot-based virtualized Raspberry Pi (raspios/raspbian) environment.
+chroot-based virtualized loongarch environment.
 
 With this action, you can:
 
-- run tests in an environment closer to a real embedded system, using qemu
+- run tests in an environment closer to a real loongarch system, using qemu
 userland Linux emulation;
 - build artifacts in such environment and upload them;
-- prepare images that are ready to run on Raspberry Pi and other ARM embedded
+- prepare images that are ready to run on loongarch and other loongarch embedded
 devices.
 
-This action works with both 32 bits (arm) and 64 bits (aarch64) images.
+This action works ONLY on  64 bits (loongarch64) images.
 
 ## Usage
 
