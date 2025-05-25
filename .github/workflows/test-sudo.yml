@@ -1,4 +1,4 @@
-name: Test sudo with pi
+name: Test sudo with loongarch
 on:
   push:
     branches:
@@ -15,4 +15,4 @@ jobs:
     - uses: ./ # pguyot/arm-runner-action@HEAD
       with:
         commands: |
-            sudo -u pi /bin/bash -c 'sudo echo hello'
+            sudo /bin/bash -c 'sudo echo hello'

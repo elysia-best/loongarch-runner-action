@@ -20,7 +20,7 @@ case $1 in
     ;;
 esac
 
-tempdir=${RUNNER_TEMP:-/home/actions/temp}/loongarch-runner
+tempdir=${RUNNER_TEMP:-/home/actions/temp}/loongarch-runner/rootfs
 rm -rf ${tempdir}
 mkdir -p ${tempdir}
 cd ${tempdir}
@@ -37,7 +37,6 @@ esac
 case `echo *` in
     *.iso)
         xorriso -osirrox on -indev * -extract / ./
-        unzip -u *
     ;;    
     *.zip)
         unzip -u *

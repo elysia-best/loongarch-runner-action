@@ -20,7 +20,7 @@ inputs:
   cpu_info:
     description: 'Path to cpu info file to be mounted on /proc/cpuinfo'
     required: false
-    default: ''
+    default: 'cpuinfo/3A6000'
   commands:
     description: 'Commands to run in the image, executed with /bin/sh'
     required: true
@@ -89,7 +89,7 @@ runs:
   steps:
     - name: Install dependencies
       run: |
-        sudo apt-get update && sudo apt-get install -y binfmt-support parted wget dosfstools zip xorriso squashfs-tools
+        sudo apt-get update && sudo apt-get install -y binfmt-support parted wget dosfstools zip xorriso squashfs-tools parted
         (test -x /usr/bin/qemu-arm-static && test -x /usr/bin/qemu-loongarch64-static) || sudo apt install -y qemu-user
       shell: bash
 
@@ -100,7 +100,7 @@ runs:
       id: download_image
     - name: Mount and optionally resize image
       run: |
-        sudo --preserve-env=GITHUB_OUTPUT bash ${GITHUB_ACTION_PATH}/mount_image.sh ${{ steps.download_image.outputs.image }} ${{ inputs.image_additional_mb }} ${{ inputs.use_systemd_nspawn }}
+        sudo --preserve-env=GITHUB_OUTPUT bash ${GITHUB_ACTION_PATH}/mount_image.sh ${{ steps.download_image.outputs.image }}  ${{ inputs.use_systemd_nspawn }}
       shell: bash
       id: mount_image
     - name: Mount CPU info
@@ -255,20 +255,8 @@ runs:
             sudo umount ${{ steps.mount_image.outputs.mount }}${repository_path}
         ;;
         esac
-        sudo bash ${GITHUB_ACTION_PATH}/cleanup_image.sh ${{ steps.mount_image.outputs.loopdev }} ${{ steps.mount_image.outputs.mount }} ${{ steps.download_image.outputs.image }} "${{ inputs.optimize_image }}" "${{ inputs.rootpartition }}"
+        sudo bash ${GITHUB_ACTION_PATH}/cleanup_image.sh ${{ steps.mount_image.outputs.mount }} ${{ steps.download_image.outputs.image }}
       shell: bash
-    - name: Restore qemu wrapper
-      if: always()
-      shell: bash
-      run: |
-        sudo update-binfmts --package arm-runner-action --remove arm-runner-action-qemu-arm /usr/bin/qemu-arm-static0
-        sudo update-binfmts --package arm-runner-action --remove arm-runner-action-qemu-arm1 /usr/bin/qemu-arm-static0
-        sudo update-binfmts --package arm-runner-action --remove arm-runner-action-qemu-aarch64 /usr/bin/qemu-aarch64-static0
-        sudo update-binfmts --package arm-runner-action --remove arm-runner-action-qemu-aarch641 /usr/bin/qemu-aarch64-static0
-        sudo rm /usr/bin/qemu-arm-static0
-        sudo rm /usr/bin/qemu-aarch64-static0
-        sudo update-binfmts --import qemu-arm || echo "warning: could not import qemu-arm"
-        sudo update-binfmts --import qemu-aarch64 || echo "warning: could not import qemu-aarch64"
 branding:
   icon: 'cpu'
   color: 'purple'
