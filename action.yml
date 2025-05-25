@@ -51,7 +51,7 @@ inputs:
   shell:
     description: 'Path to shell to run the commands with'
     required: false
-    default: '/bin/sh'
+    default: '/usr/bin/sh'
   shell_package:
     description: 'The shell package to install, if different from shell'
     required: false
@@ -156,7 +156,7 @@ runs:
         fi
         shell_package=${{ inputs.shell_package }}
         [ -x ${{ steps.mount_image.outputs.mount }}/${shell} ] || \
-        shell_path=$(sudo chroot ${{ steps.mount_image.outputs.mount }} /bin/sh -c "command -v ${shell}") || \
+        shell_path=$(sudo chroot ${{ steps.mount_image.outputs.mount }} /usr/bin/sh -c "command -v ${shell}") || \
         case ${shell} in
         bash|sh)
             :

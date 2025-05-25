@@ -34,3 +34,6 @@ fi
 
 mv "${merge_dir}/etc/resolv.conf" "${merge_dir}/etc/_resolv.conf"
 cp /etc/resolv.conf "${merge_dir}/etc/resolv.conf"
+
+echo `realpath ${merge_dir}`
+ls "${merge_dir}"
