@@ -95,7 +95,7 @@ runs:
 
     - name: Download base image
       run: |
-        bash ${GITHUB_ACTION_PATH}/download_image.sh ${{ inputs.base_image }}
+        sudo bash ${GITHUB_ACTION_PATH}/download_image.sh ${{ inputs.base_image }}
       shell: bash
       id: download_image
     - name: Mount and optionally resize image
