@@ -14,7 +14,7 @@ work_dir=${RUNNER_TEMP:-/home/actions/temp}/loongarch-runner/fs_work
 mkdir -p ${root_fsmount}
 mkdir -p ${overlayfs_mount}
 mkdir -p ${merge_dir}
-mkdir -p ${work}
+mkdir -p ${work_dir}
 echo "mount=${merge_dir}" >> "$GITHUB_OUTPUT"
 
 [ ! -d "${root_fsmount}" ] && mkdir "${root_fsmount}"
