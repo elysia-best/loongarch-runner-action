@@ -160,16 +160,7 @@ runs:
             user_opt=""
         fi
         shell_package=${{ inputs.shell_package }}
-        [ -x ${{ steps.mount_image.outputs.mount }}/${shell} ] || \
-        shell_path=$(sudo chroot ${{ steps.mount_image.outputs.mount }} /usr/bin/sh -c "command -v ${shell}") || \
-        case ${shell} in
-        bash|sh)
-            :
-        ;;
-        *)
-            sudo chroot ${{ steps.mount_image.outputs.mount }} sudo apt-get install -y ${shell_package:-${shell##*/}}
-        ;;
-        esac
+        sudo chroot ${{ steps.mount_image.outputs.mount }} sudo apt-get install -y ${shell_package:-${shell##*/}} || true
         shell_path=${shell_path:-$(sudo chroot ${{ steps.mount_image.outputs.mount }} /usr/bin/sh -c "command -v ${shell}")}
         sudo mkdir -p $(dirname ${{ steps.mount_image.outputs.mount }}${repository_path})
         case ${{ inputs.bind_mount_repository }} in
