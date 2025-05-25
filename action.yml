@@ -51,7 +51,7 @@ inputs:
   shell:
     description: 'Path to shell to run the commands with'
     required: false
-    default: '/usr/bin/sh'
+    default: '/bin/bash'
   shell_package:
     description: 'The shell package to install, if different from shell'
     required: false
@@ -165,7 +165,7 @@ runs:
             sudo chroot ${{ steps.mount_image.outputs.mount }} sudo apt-get install -y ${shell_package:-${shell##*/}}
         ;;
         esac
-        shell_path=${shell_path:-$(sudo chroot ${{ steps.mount_image.outputs.mount }} /bin/sh -c "command -v ${shell}")}
+        shell_path=${shell_path:-$(sudo chroot ${{ steps.mount_image.outputs.mount }} /usr/bin/sh -c "command -v ${shell}")}
         sudo mkdir -p $(dirname ${{ steps.mount_image.outputs.mount }}${repository_path})
         case ${{ inputs.bind_mount_repository }} in
         yes|true)
