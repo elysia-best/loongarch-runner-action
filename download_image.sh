@@ -20,8 +20,8 @@ case $1 in
     ;;
 esac
 
-tempdir=${RUNNER_TEMP:-/home/actions/temp}/loongarch-runner/rootfs
-rm -rf ${tempdir}
+tempdir=${RUNNER_TEMP:-/home/actions/temp}/loongarch-runner/rootfs_image
+# rm -rf ${tempdir}
 mkdir -p ${tempdir}
 cd ${tempdir}
 case ${url} in

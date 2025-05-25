@@ -7,10 +7,10 @@ use_systemd_nspawn=$2
 sync
 
 # Mount the rootfs image
-root_fsmount=${RUNNER_TEMP:-/home/actions/temp}/loongarch-runner/mnt
-overlayfs_mount=${RUNNER_TEMP:-/home/actions/temp}/loongarch-runner/overlay_mnt
-merge_dir=${RUNNER_TEMP:-/home/actions/temp}/loongarch-runner/fs_merge
-work_dir=${RUNNER_TEMP:-/home/actions/temp}/loongarch-runner/fs_work
+root_fsmount=${RUNNER_TEMP:-/home/actions/temp}/loongarch-runner/filesystem/mnt
+overlayfs_mount=${RUNNER_TEMP:-/home/actions/temp}/loongarch-runner/filesystem/overlay_mnt
+merge_dir=${RUNNER_TEMP:-/home/actions/temp}/loongarch-runner/filesystem/fs_merge
+work_dir=${RUNNER_TEMP:-/home/actions/temp}/loongarch-runner/filesystem/fs_work
 mkdir -p ${root_fsmount}
 mkdir -p ${overlayfs_mount}
 mkdir -p ${merge_dir}

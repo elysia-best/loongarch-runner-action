@@ -122,6 +122,10 @@ runs:
         echo "binfmt status status: $(cat /proc/sys/fs/binfmt_misc/status)"
         ls /proc/sys/fs/binfmt_misc/ | grep loongarch64
 
+        sudo chroot ${{ steps.mount_image.outputs.mount }} bash -c "uname -a"
+
+        exit 0
+
         case "${{ inputs.debug }}" in
         yes|true)
             debug='x'
@@ -161,8 +165,8 @@ runs:
             user_opt=""
         fi
         shell_package=${{ inputs.shell_package }}
-        sudo chroot ${{ steps.mount_image.outputs.mount }} sudo apt-get install -y ${shell_package:-${shell##*/}} | true
-        shell_path=${shell_path:-$(sudo chroot ${{ steps.mount_image.outputs.mount }} /usr/bin/sh -c "command -v ${shell}")}
+        sudo chroot ${{ steps.mount_image.outputs.mount }} sudo apt-get install -y ${shell_package:-${shell##*/}} || true
+        shell_path=${shell_path:-$(sudo chroot ${{ steps.mount_image.outputs.mount }} /bin/sh -c "command -v ${shell}")}
         sudo mkdir -p $(dirname ${{ steps.mount_image.outputs.mount }}${repository_path})
         case ${{ inputs.bind_mount_repository }} in
         yes|true)
