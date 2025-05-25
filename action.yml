@@ -92,6 +92,19 @@ runs:
         sudo apt-get update && sudo apt-get install -y binfmt-support parted wget dosfstools zip xorriso squashfs-tools parted
         (test -x /usr/bin/qemu-arm-static && test -x /usr/bin/qemu-loongarch64-static) || sudo apt install -y qemu-user
       shell: bash
+    - name: Install qemu wrapper
+      shell: bash
+      run: |
+        case ${{ inputs.cpu }} in
+        "")
+            cpu="la464"
+        ;;
+        *)
+            cpu=${{ inputs.cpu }}
+        esac
+        sudo gcc -static ${GITHUB_ACTION_PATH}/qemu-wrapper.c -DQEMU_CPU=${cpu} -O3 -s -o /usr/bin/qemu-lonngarch64-static0
+        sudo update-binfmts --unimport qemu-lonngarch64 || echo "warning: could not unimport qemu-arm"
+        sudo update-binfmts --package lonngarch-runner-action --install lonngarch-runner-action-qemu-lonngarch64 /usr/bin/qemu-lonngarch64-static0 --magic '\x7f\x45\x4c\x46\x02\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x02\x01' --mask '\xff\xff\xff\xff\xff\xff\xff\xfc\x00\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff' --credentials yes --fix-binary yes
     - name: Download base image
       run: |
         sudo --preserve-env=GITHUB_OUTPUT bash ${GITHUB_ACTION_PATH}/download_image.sh ${{ inputs.base_image }}
