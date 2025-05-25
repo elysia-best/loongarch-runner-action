@@ -119,7 +119,7 @@ runs:
         echo `realpath ${{ steps.mount_image.outputs.mount }}`
         echo "The content in this directory is:"
         ls -al ${{ steps.mount_image.outputs.mount }}
-        echo "binfmt status status: ${cat /proc/sys/fs/binfmt_misc/status}"
+        echo "binfmt status status: $(cat /proc/sys/fs/binfmt_misc/status)"
         ls /proc/sys/fs/binfmt_misc/ | grep loongarch64
 
         case "${{ inputs.debug }}" in
