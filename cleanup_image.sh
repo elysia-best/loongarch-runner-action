@@ -27,6 +27,5 @@ if [[ -d "${mount}" ]]; then
             done
         }
     done
-    umount -f "${mount}"
     rmdir "${mount}" || true
 fi
