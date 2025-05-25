@@ -119,9 +119,9 @@ runs:
         echo `realpath ${{ steps.mount_image.outputs.mount }}`
         echo "The content in this directory is:"
         ls -al ${{ steps.mount_image.outputs.mount }}
-        echo "qemu status"
-        ls /proc/sys/fs/binfmt_misc/
-        
+        echo "binfmt status status: ${cat /proc/sys/fs/binfmt_misc/status}"
+        ls /proc/sys/fs/binfmt_misc/ | grep loongarch64
+
         case "${{ inputs.debug }}" in
         yes|true)
             debug='x'
