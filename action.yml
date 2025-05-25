@@ -92,7 +92,6 @@ runs:
         sudo apt-get update && sudo apt-get install -y binfmt-support parted wget dosfstools zip xorriso squashfs-tools parted
         (test -x /usr/bin/qemu-arm-static && test -x /usr/bin/qemu-loongarch64-static) || sudo apt install -y qemu-user
       shell: bash
-
     - name: Download base image
       run: |
         sudo --preserve-env=GITHUB_OUTPUT bash ${GITHUB_ACTION_PATH}/download_image.sh ${{ inputs.base_image }}
@@ -120,7 +119,9 @@ runs:
         echo `realpath ${{ steps.mount_image.outputs.mount }}`
         echo "The content in this directory is:"
         ls -al ${{ steps.mount_image.outputs.mount }}
-
+        echo "qemu status"
+        ls /proc/sys/fs/binfmt_misc/
+        
         case "${{ inputs.debug }}" in
         yes|true)
             debug='x'
@@ -160,7 +161,7 @@ runs:
             user_opt=""
         fi
         shell_package=${{ inputs.shell_package }}
-        sudo chroot ${{ steps.mount_image.outputs.mount }} sudo apt-get install -y ${shell_package:-${shell##*/}} || true
+        sudo chroot ${{ steps.mount_image.outputs.mount }} sudo apt-get install -y ${shell_package:-${shell##*/}} | true
         shell_path=${shell_path:-$(sudo chroot ${{ steps.mount_image.outputs.mount }} /usr/bin/sh -c "command -v ${shell}")}
         sudo mkdir -p $(dirname ${{ steps.mount_image.outputs.mount }}${repository_path})
         case ${{ inputs.bind_mount_repository }} in
